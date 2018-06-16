@@ -6,3 +6,4 @@ composer.phar
 # composer.lock
 
 /runtime/
+/daemon/KolaDB.config.php

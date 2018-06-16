@@ -48,8 +48,9 @@ class KolaSocket
     }
 
     /**
-     * @param $address
-     * @param $port
+     * Note: When specifying a numerical IPv6 address (e.g. fe80::1), you must enclose the IP in square brackets—for example, tcp://[fe80::1]:80.
+     * @param string $address IPv4 or IPv6
+     * @param int $port
      */
     public function configSocketAsTcpIp($address, $port)
     {
@@ -75,17 +76,17 @@ class KolaSocket
     /**
      * @param callback|null $specialHandler
      */
-//    protected function registerDeathSignalHandler($specialHandler = null)
-//    {
-//        KolaServiceHelper::defineSignalHandler([SIGINT, SIGTERM, SIGHUP], function ($signal_number) use ($specialHandler) {
-//            KolaServiceHelper::getLogger()->error("SIGNAL: " . $signal_number);
-//            if ($specialHandler) {
-//                call_user_func_array($specialHandler, [$this->serverSocket, $signal_number]);
-//            }
-//            $this->terminateServerWhenSignalComes();
-//            exit();
-//        });
-//    }
+    protected function registerDeathSignalHandler($specialHandler = null)
+    {
+        KolaServiceHelper::defineSignalHandler([SIGINT, SIGTERM, SIGHUP], function ($signal_number) use ($specialHandler) {
+            KolaServiceHelper::getLogger()->error("SIGNAL: " . $signal_number);
+            if ($specialHandler) {
+                call_user_func_array($specialHandler, [$this->serverSocket, $signal_number]);
+            }
+            $this->terminateServerWhenSignalComes();
+            exit();
+        });
+    }
 
     /**
      * @param callable|null $requestHandler (resource $client)
@@ -103,11 +104,13 @@ class KolaSocket
         if ($this->serverSocket === false) {
             throw new \UnexpectedValueException("Could not bind to socket: $errorMessage");
         }
-        //$this->registerDeathSignalHandler($specialHandler);
+        $this->registerDeathSignalHandler($specialHandler);
         KolaServiceHelper::getLogger()->info("BEGIN LISTEN...");
         while (true) {
-            //KolaServiceHelper::getLogger()->debug("Now server runs `pcntl_signal_dispatch`");
-            //pcntl_signal_dispatch();
+            if (function_exists("pcntl_signal_dispatch")) {
+                KolaServiceHelper::getLogger()->debug("Now server runs `pcntl_signal_dispatch`");
+                pcntl_signal_dispatch();
+            }
             $client = stream_socket_accept($this->serverSocket, $this->listenTimeout, $this->peerName);
             if ($client) {
                 $callback_command = self::SERVER_CALLBACK_COMMAND_NONE;

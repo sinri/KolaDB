@@ -27,11 +27,10 @@ class KolaClient
      */
     protected $data;
 
-    public function __construct()
+    public function __construct($address = '127.0.0.1', $port = 3333)
     {
         $this->socketAgent = new KolaSocket();
-        //$this->workers = [];
-        //$this->max_workers = InfuraOfficeToolkit::readConfig(['daemon', 'max_workers'], 0);
+        $this->socketAgent->configSocketAsTcpIp($address, $port);
     }
 
     /**
@@ -42,8 +41,6 @@ class KolaClient
         return $this->error;
     }
 
-    //protected $workers = [];
-    //protected $max_workers = 0;
 
     /**
      * @return null
@@ -60,7 +57,6 @@ class KolaClient
     public function call($action)
     {
         try {
-            $this->socketAgent->configSocketAsTcpIp("127.0.0.1", 3333);
             $response = $this->socketAgent->runClient(
                 function ($server) use ($action) {
                     fwrite($server, json_encode($action->encode()));

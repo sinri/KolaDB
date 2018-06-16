@@ -48,15 +48,17 @@ class KolaServiceHelper
      * @param array $signals
      * @param callable $callback
      */
-//    public static function defineSignalHandler($signals, $callback)
-//    {
-//        // in doc sb. saith, as of PHP 5.3, use pcntl_signal_dispatch instead
-//        // but that would be not able to operate the real time signal
-//        declare(ticks=1);
-//        foreach ($signals as $signal) {
-//            pcntl_signal($signal, $callback);
-//        }
-//    }
+    public static function defineSignalHandler($signals, $callback)
+    {
+        // in doc sb. saith, as of PHP 5.3, use pcntl_signal_dispatch instead
+        // but that would be not able to operate the real time signal
+        if (function_exists("pcntl_signal")) {
+            declare(ticks=1);
+            foreach ($signals as $signal) {
+                pcntl_signal($signal, $callback);
+            }
+        }
+    }
     /**
      * @param $status
      * @return string
