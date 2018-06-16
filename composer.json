@@ -1,0 +1,20 @@
+{
+  "name": "sinri/KolaDB",
+  "description": "Simple Information Storage Service",
+  "minimum-stability": "stable",
+  "license": "GPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Sinri Edogawa",
+      "email": "ljni@leqee.com"
+    }
+  ],
+  "require": {
+    "sinri/ark": "~1.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "sinri\\KolaDB\\": "src/"
+    }
+  }
+}
