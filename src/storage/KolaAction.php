@@ -56,6 +56,56 @@ class KolaAction
     }
 
     /**
+     * @param string $clusterName
+     * @param null|string $collectionName
+     * @param null|string $objectName
+     * @return KolaAction
+     */
+    public static function createDropAction($clusterName, $collectionName = null, $objectName = null)
+    {
+        $instance = new KolaAction();
+        $instance->action = self::ACTION_DROP;
+        $instance->clusterName = $clusterName;
+        $instance->collectionName = $collectionName;
+        $instance->objectName = $objectName;
+        return $instance;
+    }
+
+    /**
+     * @param string $clusterName
+     * @param string $collectionName
+     * @param string $objectName
+     * @param array $data
+     * @return KolaAction
+     */
+    public static function createEditAction($clusterName, $collectionName, $objectName, $data)
+    {
+        $instance = new KolaAction();
+        $instance->action = self::ACTION_EDIT;
+        $instance->clusterName = $clusterName;
+        $instance->collectionName = $collectionName;
+        $instance->objectName = $objectName;
+        $instance->data = $data;
+        return $instance;
+    }
+
+    /**
+     * @param string $clusterName
+     * @param string $collectionName
+     * @param KolaQuery $query
+     * @return KolaAction
+     */
+    public static function createQueryAction($clusterName, $collectionName, $query)
+    {
+        $instance = new KolaAction();
+        $instance->action = self::ACTION_QUERY;
+        $instance->clusterName = $clusterName;
+        $instance->collectionName = $collectionName;
+        $instance->query = $query;
+        return $instance;
+    }
+
+    /**
      * @param string $string
      * @return KolaAction
      * @throws \Exception
@@ -100,9 +150,9 @@ class KolaAction
                 $instance->collectionName = ArkHelper::readTarget($dictionary, 'collection');
                 $instance->objectName = ArkHelper::readTarget($dictionary, 'object');
                 if (
-                    KolaFileSystemMapping::isValidEntityName($instance->clusterName)
-                    || KolaFileSystemMapping::isValidEntityName($instance->collectionName)
-                    || KolaFileSystemMapping::isValidEntityName($instance->objectName)
+                    !KolaFileSystemMapping::isValidEntityName($instance->clusterName)
+                    || !KolaFileSystemMapping::isValidEntityName($instance->collectionName)
+                    || !KolaFileSystemMapping::isValidEntityName($instance->objectName)
                 ) {
                     throw new \Exception("belonging is not valid");
                 }
@@ -166,5 +216,39 @@ class KolaAction
             $this->error = $exception->getMessage();
             return false;
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function encode()
+    {
+        $json = [
+            'action' => $this->action,
+        ];
+        switch ($this->action) {
+            case self::ACTION_QUERY:
+                $json['cluster'] = $this->clusterName;
+                $json['collection'] = $this->collectionName;
+                //$json['object']=$this->objectName;
+                $json['query'] = $this->query->encode();
+                break;
+            case self::ACTION_EDIT:
+                $json['cluster'] = $this->clusterName;
+                $json['collection'] = $this->collectionName;
+                $json['object'] = $this->objectName;
+                $json['data'] = $this->data;
+                break;
+            case self::ACTION_DROP:
+                $json['cluster'] = $this->clusterName;
+                if (KolaFileSystemMapping::isValidEntityName($this->collectionName)) {
+                    $json['collection'] = $this->collectionName;
+                    if (KolaFileSystemMapping::isValidEntityName($this->objectName)) {
+                        $json['object'] = $this->objectName;
+                    }
+                }
+                break;
+        }
+        return $json;
     }
 }

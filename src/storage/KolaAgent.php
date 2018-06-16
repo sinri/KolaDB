@@ -56,13 +56,21 @@ class KolaAgent
     /**
      * @param string $collectionName
      * @param KolaQuery $query
-     * @return KolaObject[]
+     * @return array
      */
     public function selectObjectsInCollection($collectionName, $query)
     {
         try {
             $collection = $this->getCollection($collectionName);
-            return $query->resultForCollection($collection);
+            $list = $query->resultForCollection($collection);
+            $result = [];
+            foreach ($list as $item) {
+                $result[] = [
+                    "object_name" => $item->getObjectName(),
+                    "data" => $item->getData(),
+                ];
+            }
+            return $result;
         } catch (\Exception $e) {
             return [];
         }

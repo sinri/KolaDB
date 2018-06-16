@@ -62,6 +62,61 @@ class KolaQuery
     }
 
     /**
+     * @param string $method
+     * @param string $field
+     * @param string $reference
+     * @return KolaQuery
+     * @throws \Exception
+     */
+    public static function createSingleQuery($method, $field, $reference)
+    {
+        if (!self::isValidMethod($method, $type) || $type !== 'SCALAR') {
+            throw new \Exception("not correct method");
+        }
+        $instance = new KolaQuery();
+        $instance->method = $method;
+        $instance->field = $field;
+        $instance->reference = $reference;
+        return $instance;
+    }
+
+    /**
+     * @param string $method
+     * @param string $field
+     * @param string[] $group
+     * @return KolaQuery
+     * @throws \Exception
+     */
+    public static function createMultipleQuery($method, $field, $group)
+    {
+        if (!self::isValidMethod($method, $type) || $type !== 'ARRAY') {
+            throw new \Exception("not correct method");
+        }
+        $instance = new KolaQuery();
+        $instance->method = $method;
+        $instance->field = $field;
+        $instance->reference = $group;
+        return $instance;
+    }
+
+    /**
+     * @param string $method
+     * @param KolaQuery[] $queries
+     * @return KolaQuery
+     * @throws \Exception
+     */
+    public static function createGroupQuery($method, $queries)
+    {
+        if (!self::isValidMethod($method, $type) || $type !== 'QUERIES') {
+            throw new \Exception("not correct method");
+        }
+        $instance = new KolaQuery();
+        $instance->method = $method;
+        $instance->queries = $queries;
+        return $instance;
+    }
+
+    /**
      * @deprecated
      * @param string $queryString
      * @return KolaQuery
@@ -259,5 +314,30 @@ class KolaQuery
             default:
                 return false;
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function encode()
+    {
+        $json = [
+            "method" => $this->method,
+        ];
+        self::isValidMethod($this->method, $type);
+        switch ($type) {
+            case "SCALAR":
+            case "ARRAY":
+                $json['field'] = $this->field;
+                $json['reference'] = $this->reference;
+                break;
+            case "QUERIES":
+                $json['queries'] = [];
+                foreach ($this->queries as $query) {
+                    $json['queries'][] = $query->encode();
+                }
+                break;
+        }
+        return $json;
     }
 }

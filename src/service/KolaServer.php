@@ -9,6 +9,9 @@
 namespace sinri\KolaDB\service;
 
 
+use sinri\ark\core\ArkHelper;
+use sinri\KolaDB\storage\KolaAction;
+
 class KolaServer
 {
     /**
@@ -43,9 +46,27 @@ class KolaServer
                             break;
                         }
                     }
-                    KolaServiceHelper::getLogger()->debug("Yomi received data: " . PHP_EOL . $content . PHP_EOL);
+                    KolaServiceHelper::getLogger()->debug("Yomi received data: " . $content);
 
-                    fwrite($client, "response here");
+                    try {
+                        $action = KolaAction::loadEditString($content);
+                        $done = $action->execute();
+                        ArkHelper::assertItem($done, "KolaAction Error: " . $action->error);
+                        $result = [
+                            "code" => "OK",
+                            "data" => $action->result,
+                        ];
+                    } catch (\Exception $exception) {
+                        $result = [
+                            "code" => "FAIL",
+                            "data" => $exception->getMessage(),
+                        ];
+                    }
+
+                    $responseString = json_encode($result);
+                    fwrite($client, $responseString);
+
+                    KolaServiceHelper::getLogger()->debug("Response: " . $responseString);
 
                     return KolaSocket::SERVER_CALLBACK_COMMAND_CLOSE_CLIENT;
                 },

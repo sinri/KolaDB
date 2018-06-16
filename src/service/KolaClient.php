@@ -9,14 +9,24 @@
 namespace sinri\KolaDB\service;
 
 
+use sinri\ark\core\ArkHelper;
+use sinri\KolaDB\storage\KolaAction;
+
 class KolaClient
 {
     /**
      * @var KolaSocket
      */
     protected $socketAgent;
-    //protected $workers = [];
-    //protected $max_workers = 0;
+    /**
+     * @var null|string
+     */
+    protected $error;
+    /**
+     * @var null|
+     */
+    protected $data;
+
     public function __construct()
     {
         $this->socketAgent = new KolaSocket();
@@ -24,15 +34,38 @@ class KolaClient
         //$this->max_workers = InfuraOfficeToolkit::readConfig(['daemon', 'max_workers'], 0);
     }
 
-    public function call()
+    /**
+     * @return null|string
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    //protected $workers = [];
+    //protected $max_workers = 0;
+
+    /**
+     * @return null
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param KolaAction $action
+     * @return bool
+     */
+    public function call($action)
     {
         try {
             $this->socketAgent->configSocketAsTcpIp("127.0.0.1", 3333);
-            $this->socketAgent->runClient(
-                function ($server) {
-                    fwrite($server, json_encode(["test" => "test"]));
+            $response = $this->socketAgent->runClient(
+                function ($server) use ($action) {
+                    fwrite($server, json_encode($action->encode()));
 
-                    KolaServiceHelper::getLogger()->info('Accepted from erver');
+                    KolaServiceHelper::getLogger()->info('Accepted from server');
                     stream_set_timeout($server, 0, 100000);
                     $content = '';
                     while (!feof($server)) {
@@ -44,12 +77,22 @@ class KolaClient
                             break;
                         }
                     }
-                    KolaServiceHelper::getLogger()->debug("Yomi received data: " . PHP_EOL . $content . PHP_EOL);
-
+                    KolaServiceHelper::getLogger()->debug("Yomi received data: " . $content);
+                    return $content;
                 }
             );
+            $response = json_decode($response, true);
+            KolaServiceHelper::getLogger()->debug("response parsed as", [$response]);
+            if (ArkHelper::readTarget($response, 'code') !== 'OK') {
+                $error = ArkHelper::readTarget($response, 'error');
+                throw new \Exception($error);
+            }
+            $this->data = ArkHelper::readTarget($response, 'data');
+            return true;
         } catch (\Exception $exception) {
-            KolaServiceHelper::getLogger()->error("Exception when listening: " . $exception->getMessage());
+            $this->error = "Exception when listening: " . $exception->getMessage();
+            KolaServiceHelper::getLogger()->error($this->error);
+            return false;
         }
     }
 }
