@@ -2,6 +2,8 @@
 
 Simple Information Storage Service.
 
+> composer require sinri/kola-db
+
 ## Structure
 
 ```
