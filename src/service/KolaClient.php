@@ -43,7 +43,7 @@ class KolaClient
 
 
     /**
-     * @return null
+     * @return mixed
      */
     public function getData()
     {

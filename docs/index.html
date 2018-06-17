@@ -2,9 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>KolaDB Introduction</title>
+    <title>KolaDB Docs</title>
 </head>
 <body>
 <h1>KolaDB</h1>
+<hr>
+<h2>Introduction</h2>
+<p>
+    KolaDB is a simple information storage service.
+</p>
+<p>
+    It is designed for storing basic objects with properties as key-value pairs,
+    and the objects are belonging to collection, while a collection is of a cluster.
+</p>
+<p>
+    KolaDB accepts three kinds of actions, QUERY, EDIT and DROP.
+    Incoming actions are treated as a serial of atomic operations, so no transaction is considered.
+</p>
+<hr>
+<h2>Usage</h2>
+<p>
+    KolaDB contains service daemon (a.k.a. server) and client.
+    A server should be deployed first, then the client(s) might connect to it and work.
+</p>
+<p>
+    How to deploy a service daemon? It is easy.
+    Clone the project, or download the release package and unarchive it, make a writable folder called runtime in it.
+    Then, make the KolaDB.config.php file, which might be made after the sample file,
+    and select one place to put it, in daemon folder or in /etc/KolaDB.
+    Then run the daemon/KolaDBDaemon.php file with php command.
+    The daemon would listen to the address and port.
+</p>
+<p>
+    For client side, just use the KolaDBSDK to connect and do actions.
+</p>
 </body>
 </html>
