@@ -1,5 +1,5 @@
 {
-  "name": "sinri/KolaDB",
+  "name": "sinri/kola-db",
   "description": "Simple Information Storage Service",
   "minimum-stability": "stable",
   "license": "GPL-3.0-or-later",
