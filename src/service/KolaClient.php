@@ -10,6 +10,7 @@ namespace sinri\KolaDB\service;
 
 
 use sinri\ark\core\ArkHelper;
+use sinri\ark\core\ArkLogger;
 use sinri\KolaDB\storage\KolaAction;
 
 class KolaClient
@@ -51,6 +52,14 @@ class KolaClient
     }
 
     /**
+     * @return ArkLogger
+     */
+    public function getLogger()
+    {
+        return ArkLogger::makeSilentLogger();
+    }
+
+    /**
      * @param KolaAction $action
      * @return bool
      */
@@ -61,7 +70,7 @@ class KolaClient
                 function ($server) use ($action) {
                     fwrite($server, json_encode($action->encode()));
 
-                    KolaServiceHelper::getLogger()->info('Accepted from server');
+                    $this->getLogger()->info('Accepted from server');
                     stream_set_timeout($server, 0, 100000);
                     $content = '';
                     while (!feof($server)) {
@@ -73,12 +82,12 @@ class KolaClient
                             break;
                         }
                     }
-                    KolaServiceHelper::getLogger()->debug("Yomi received data: " . $content);
+                    $this->getLogger()->debug("Yomi received data: " . $content);
                     return $content;
                 }
             );
             $response = json_decode($response, true);
-            KolaServiceHelper::getLogger()->debug("response parsed as", [$response]);
+            $this->getLogger()->debug("response parsed as", [$response]);
             if (ArkHelper::readTarget($response, 'code') !== 'OK') {
                 $error = ArkHelper::readTarget($response, 'error');
                 throw new \Exception($error);
@@ -87,7 +96,7 @@ class KolaClient
             return true;
         } catch (\Exception $exception) {
             $this->error = "Exception when listening: " . $exception->getMessage();
-            KolaServiceHelper::getLogger()->error($this->error);
+            $this->getLogger()->error($this->error);
             return false;
         }
     }

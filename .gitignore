@@ -7,3 +7,5 @@ composer.phar
 
 /runtime/
 /daemon/KolaDB.config.php
+/src/web/config/config.php
+/src/web/.htaccess

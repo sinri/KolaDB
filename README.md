@@ -31,6 +31,16 @@ Cluster::DIR {
 }
 ```
 
+```json
+{
+  "action":"rename",
+  "cluster":"CLUSTER_NAME",
+  "collection":"COLLECTION_NAME",
+  "object":"OBJECT_NAME",
+  "change":"NEW_NAME"
+}
+```
+
 ### Action for Query
 
 ```json
@@ -62,4 +72,14 @@ Cluster::DIR {
   ]
 }
 
+```
+
+### Action for show
+
+```json
+{
+  "action":"list",
+  "cluster":"CLUSTER_NAME",
+  "collection":"COLLECTION_NAME"
+}
 ```

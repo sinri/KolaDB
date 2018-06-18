@@ -117,7 +117,6 @@ class KolaQuery
     }
 
     /**
-     * @deprecated
      * @param string $queryString
      * @return KolaQuery
      * @throws \Exception

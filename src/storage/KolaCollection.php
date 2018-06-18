@@ -53,6 +53,9 @@ class KolaCollection extends KolaFileSystemMapping
         return KolaCluster::getClusterDirectoryPath($clusterName) . '/' . base64_encode($collectionName);
     }
 
+    /**
+     * @return string[]|bool
+     */
     public function getObjectNameList()
     {
         if ($this->collectionName === null || $this->clusterName === null) {

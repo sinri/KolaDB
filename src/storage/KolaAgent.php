@@ -146,4 +146,22 @@ class KolaAgent
         }
     }
 
+    /**
+     * @return string[]
+     */
+    public static function listClusters()
+    {
+        $list = [];
+        if ($handle = opendir(__DIR__ . '/../../runtime')) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry != "." && $entry != "..") {
+                    $realClusterName = base64_decode($entry);
+                    $list[] = $realClusterName;
+                }
+            }
+            closedir($handle);
+        }
+        return $list;
+    }
+
 }

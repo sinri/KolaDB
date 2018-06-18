@@ -16,6 +16,8 @@ class KolaAction
     const ACTION_EDIT = "edit";
     const ACTION_DROP = "drop";
     const ACTION_QUERY = "query";
+    const ACTION_LIST = "list";
+    const ACTION_RENAME = "rename";
 
     /**
      * @var string
@@ -41,6 +43,10 @@ class KolaAction
      * @var null|KolaQuery
      */
     public $query;
+    /**
+     * @var null|string
+     */
+    public $change;
 
     public $error;
     public $result;
@@ -106,6 +112,38 @@ class KolaAction
     }
 
     /**
+     * @param string|null $clusterName
+     * @param string|null $collectionName
+     * @return KolaAction
+     */
+    public static function createListAction($clusterName = null, $collectionName = null)
+    {
+        $instance = new KolaAction();
+        $instance->action = self::ACTION_LIST;
+        $instance->clusterName = $clusterName;
+        $instance->collectionName = $collectionName;
+        return $instance;
+    }
+
+    /**
+     * @param string $clusterName
+     * @param null|string $collectionName
+     * @param null|string $objectName
+     * @param string $change
+     * @return KolaAction
+     */
+    public static function createRenameAction($clusterName, $collectionName, $objectName, $change)
+    {
+        $instance = new KolaAction();
+        $instance->action = self::ACTION_RENAME;
+        $instance->clusterName = $clusterName;
+        $instance->collectionName = $collectionName;
+        $instance->objectName = $objectName;
+        $instance->change = $change;
+        return $instance;
+    }
+
+    /**
      * @param string $string
      * @return KolaAction
      * @throws \Exception
@@ -114,7 +152,7 @@ class KolaAction
     {
         $json = json_decode($string, true);
         if (!is_array($json)) throw new \Exception("invalid edit string");
-        return self::loadQueryDictionary($json);
+        return self::loadActionDictionary($json);
     }
 
     /**
@@ -122,13 +160,10 @@ class KolaAction
      * @return KolaAction
      * @throws \Exception
      */
-    public static function loadQueryDictionary($dictionary)
+    public static function loadActionDictionary($dictionary)
     {
         $instance = new KolaAction();
         $instance->action = ArkHelper::readTarget($dictionary, 'action');
-        ArkHelper::assertItem(in_array($instance->action, [
-            self::ACTION_DROP, self::ACTION_EDIT, self::ACTION_QUERY,
-        ]), 'action invalid');
 
         $instance->clusterName = ArkHelper::readTarget($dictionary, 'cluster');
         $instance->collectionName = ArkHelper::readTarget($dictionary, 'collection');
@@ -164,6 +199,26 @@ class KolaAction
                     if (!is_string($key) || !is_string($value)) throw new \Exception("data should be all string");
                 }
                 break;
+            case self::ACTION_RENAME:
+                $instance->clusterName = ArkHelper::readTarget($dictionary, 'cluster');
+                if (!KolaFileSystemMapping::isValidEntityName($instance->clusterName)) {
+                    throw new \Exception("cluster name invalid");
+                }
+                $instance->collectionName = ArkHelper::readTarget($dictionary, 'collection');
+                if (KolaFileSystemMapping::isValidEntityName($instance->collectionName)) {
+                    $instance->objectName = ArkHelper::readTarget($dictionary, 'object');
+                }
+                $instance->change = ArkHelper::readTarget($dictionary, 'change');
+                if (!KolaFileSystemMapping::isValidEntityName($instance->change)) {
+                    throw new \Exception("Not a valid change!");
+                }
+                break;
+            case self::ACTION_LIST:
+                $instance->clusterName = ArkHelper::readTarget($dictionary, 'cluster');
+                if (KolaFileSystemMapping::isValidEntityName($instance->clusterName)) {
+                    $instance->collectionName = ArkHelper::readTarget($dictionary, 'collection');
+                }
+                break;
             case self::ACTION_QUERY:
                 $instance->clusterName = ArkHelper::readTarget($dictionary, 'cluster');
                 if (!KolaFileSystemMapping::isValidEntityName($instance->clusterName)) {
@@ -175,6 +230,8 @@ class KolaAction
                 }
                 $instance->query = KolaQuery::loadQueryDictionary(ArkHelper::readTarget($dictionary, 'query'));
                 break;
+            default:
+                throw new \Exception("action is not defined");
         }
 
         return $instance;
@@ -190,6 +247,16 @@ class KolaAction
                 case self::ACTION_QUERY:
                     $agent = new KolaAgent($this->clusterName);
                     $this->result = $agent->selectObjectsInCollection($this->collectionName, $this->query);
+                    break;
+                case self::ACTION_LIST:
+                    $agent = new KolaAgent($this->clusterName);
+                    if (KolaFileSystemMapping::isValidEntityName($this->collectionName)) {
+                        $this->result = $agent->getCollection($this->collectionName)->getObjectNameList();
+                    } elseif (KolaFileSystemMapping::isValidEntityName($this->clusterName)) {
+                        $this->result = $agent->getCluster()->getCollectionNameList();
+                    } else {
+                        $this->result = KolaAgent::listClusters();
+                    }
                     break;
                 case self::ACTION_EDIT:
                     $agent = new KolaAgent($this->clusterName);
@@ -207,6 +274,17 @@ class KolaAction
                         $done = KolaAgent::dropCluster($this->clusterName);
                     }
                     ArkHelper::assertItem($done, 'drop failed');
+                    break;
+                case self::ACTION_RENAME:
+                    $agent = new KolaAgent($this->clusterName);
+                    if (KolaFileSystemMapping::isValidEntityName($this->objectName)) {
+                        $done = $agent->getCollection($this->collectionName)->getObject($this->objectName)->rename($this->change);
+                    } elseif (KolaFileSystemMapping::isValidEntityName($this->collectionName)) {
+                        $done = $agent->getCollection($this->collectionName)->rename($this->change);
+                    } else {
+                        $done = $agent->getCluster()->rename($this->change);
+                    }
+                    ArkHelper::assertItem($done, 'rename failed');
                     break;
                 default:
                     throw new \Exception("action is not defined");
@@ -239,6 +317,7 @@ class KolaAction
                 $json['object'] = $this->objectName;
                 $json['data'] = $this->data;
                 break;
+            case self::ACTION_LIST:
             case self::ACTION_DROP:
                 $json['cluster'] = $this->clusterName;
                 if (KolaFileSystemMapping::isValidEntityName($this->collectionName)) {

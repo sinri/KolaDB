@@ -30,6 +30,53 @@ class KolaDBSDK
         $this->client = new KolaClient($this->address, $this->port);
     }
 
+    // list
+
+    /**
+     * @return bool|string[]
+     */
+    public function listClusters()
+    {
+        $action = KolaAction::createListAction(null, null);
+        $done = $this->client->call($action);
+        if ($done) {
+            return $this->client->getData();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param string $clusterName
+     * @return bool|string[]
+     */
+    public function listCollectionsInCluster($clusterName)
+    {
+        $action = KolaAction::createListAction($clusterName, null);
+        $done = $this->client->call($action);
+        if ($done) {
+            return $this->client->getData();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param string $clusterName
+     * @param string $collectionName
+     * @return bool|string[]
+     */
+    public function listObjectsInCollection($clusterName, $collectionName)
+    {
+        $action = KolaAction::createListAction($clusterName, $collectionName);
+        $done = $this->client->call($action);
+        if ($done) {
+            return $this->client->getData();
+        } else {
+            return false;
+        }
+    }
+
     // query
 
     /**
@@ -111,6 +158,62 @@ class KolaDBSDK
         ArkHelper::assertItem(KolaFileSystemMapping::isValidEntityName($collectionName), 'collection name invalid');
         ArkHelper::assertItem(KolaFileSystemMapping::isValidEntityName($objectName), 'object name invalid');
         $action = KolaAction::createDropAction($clusterName, $collectionName, $objectName);
+        $done = $this->client->call($action);
+        return $done;
+    }
+
+    // rename
+
+    /**
+     * @param string $clusterName
+     * @param string $name
+     * @return bool
+     * @throws \Exception
+     */
+    public function renameCluster($clusterName, $name)
+    {
+        ArkHelper::assertItem(KolaFileSystemMapping::isValidEntityName($name), 'new name invalid');
+        ArkHelper::assertItem(KolaFileSystemMapping::isValidEntityName($clusterName), 'cluster name invalid');
+        $collectionName = null;
+        $objectName = null;
+        $action = KolaAction::createRenameAction($clusterName, $collectionName, $objectName, $name);
+        $done = $this->client->call($action);
+        return $done;
+    }
+
+    /**
+     * @param string $clusterName
+     * @param string $collectionName
+     * @param string $name
+     * @return bool
+     * @throws \Exception
+     */
+    public function renameCollection($clusterName, $collectionName, $name)
+    {
+        ArkHelper::assertItem(KolaFileSystemMapping::isValidEntityName($name), 'new name invalid');
+        ArkHelper::assertItem(KolaFileSystemMapping::isValidEntityName($clusterName), 'cluster name invalid');
+        ArkHelper::assertItem(KolaFileSystemMapping::isValidEntityName($collectionName), 'collection name invalid');
+        $objectName = null;
+        $action = KolaAction::createRenameAction($clusterName, $collectionName, $objectName, $name);
+        $done = $this->client->call($action);
+        return $done;
+    }
+
+    /**
+     * @param string $clusterName
+     * @param string $collectionName
+     * @param string $objectName
+     * @param string $name
+     * @return bool
+     * @throws \Exception
+     */
+    public function renameObject($clusterName, $collectionName, $objectName, $name)
+    {
+        ArkHelper::assertItem(KolaFileSystemMapping::isValidEntityName($name), 'new name invalid');
+        ArkHelper::assertItem(KolaFileSystemMapping::isValidEntityName($clusterName), 'cluster name invalid');
+        ArkHelper::assertItem(KolaFileSystemMapping::isValidEntityName($collectionName), 'collection name invalid');
+        ArkHelper::assertItem(KolaFileSystemMapping::isValidEntityName($objectName), 'object name invalid');
+        $action = KolaAction::createRenameAction($clusterName, $collectionName, $objectName, $name);
         $done = $this->client->call($action);
         return $done;
     }
