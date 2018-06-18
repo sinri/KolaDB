@@ -5,6 +5,8 @@
 
 Simple Information Storage Service.
 
+https://sinri.github.io/KolaDB/index.html
+
 > composer require sinri/kola-db
 
 ## Structure
