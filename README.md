@@ -1,5 +1,8 @@
 # KolaDB
 
+![GitHub](https://img.shields.io/github/release/sinri/KolaDB.svg)
+![Packagist](https://img.shields.io/packagist/v/sinri/kola-db.svg)
+
 Simple Information Storage Service.
 
 > composer require sinri/kola-db
