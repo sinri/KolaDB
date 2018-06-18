@@ -76,6 +76,24 @@ class KolaAgent
         }
     }
 
+    /**
+     * @param string $collectionName
+     * @param string $objectName
+     * @return array|bool
+     */
+    public function selectObjectInCollection($collectionName, $objectName)
+    {
+        try {
+            $object = $this->getCollection($collectionName)->getObject($objectName);
+            return [
+                "object_name" => $object->getObjectName(),
+                "data" => $object->getData(),
+            ];
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     // insert/update
 
     /**

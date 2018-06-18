@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KolaDB 说明</title>
+</head>
+<body>
+<h1>KolaDB</h1>
+<p>
+    Language: <a href="index.html">English</a> 中文
+</p>
+<hr>
+<div>
+    <h2>介绍</h2>
+    <p>
+        KolaDB是一个简单的数据存储服务，以GPL第三版协议开源。
+    </p>
+    <p>
+        KolaDB的组织结构，或者说数据的存储和处理方式，是以对象（Object）为基本单位的，并在对象一级实现了原子性。
+        若干个对象被置于一个对象集（Collection）中，而若干个对象集共存于一个群落（Cluster）中。
+        该设计是为了日后考虑安全性时，可以按照群落进行授权。
+        目前，KolaDB仅提供可配置的监听方式来实现访问限制，这一限制已经可以解决大部分自部署的需求。
+    </p>
+    <p>
+        KolaDB项目包含了服务端daemon和客户端用的SDK。
+        作为服务端部署时，需要启动daemon并保持运行。
+        作为客户端使用时无需部署，直接使用SDK连接服务端即可。
+    </p>
+</div>
+<div>
+    <h2>部署服务</h2>
+    <p>
+        部署服务端程序的步骤如下。
+    </p>
+    <p>
+        第一步，获取KolaDB的发行包。
+        可以从GitHub上下载到源代码，也可以从Packagist库通过Composer获取，按需自取。
+    </p>
+    <p>
+        第二步，编辑配置文件。
+        在KolaDB根目录下的daemon目录下可以找到 KolaDB.config.sample.php 文件，
+        以此为模板，编辑 KolaDB.config.php 文件，设定好监听地址和端口，
+        并按需放置到以下任一目录下，按优先级排列为：
+        (1) daemon目录下；
+        (2) <code>/etc/KolaDB</code>目录下；
+        (3) 运行用户的主目录下的KolaDB目录（<code>~/KolaDB</code>）下。
+        从安全性角度考虑，默认只接受本地访问请求，如有需求也可以自行更改监听范围。
+    </p>
+    <p>
+        第三步，运行KolaDB的服务daemon。
+        鉴于不是所有环境都兼容PCNTL或者有Swoole支持，可以使用nohup。
+        运行daemon的方式为执行daemon目录下的 KolaDBDaemon.php 文件。
+    </p>
+</div>
+<div>
+    <h2>连接服务</h2>
+    <p>
+        要使用KolaDB的服务，可以通过SDK进行访问。
+        KolaDB的SDK可以通过Composer获取：<code>composer require sinri/kola-db</code> 。
+    </p>
+    <p>
+        SDK入口类为<code>sinri\KolaDB\sdk\KolaDBSDK</code>，使用服务地址和端口即可初始化此类。
+        此类提供了对群落、对象集和对象的各种操作。
+        以下操作均为原子操作。
+    </p>
+    <h3>listClusters</h3>
+    <p>
+        列出群落名字列表。不需要参数。
+    </p>
+    <h3>listCollectionsInCluster</h3>
+    <p>
+        列出指定群落中的对象集名字列表。需要参数为群落名(clusterName)。
+    </p>
+    <h3>listObjectsInCollection</h3>
+    <p>
+        列出指定对象集中的对象名字列表。需要参数为群落名和对象集名(clusterName, collectionName)。
+    </p>
+    <h3>queryObject</h3>
+    <p>
+        按照指定的条件查询对象集中的对象。需要的参数为群落名、对象集名和查询(clusterName, collectionName, query)。
+        其中查询参数可以为查询类（KolaQuery）的实例，进行条件查询；也可以是一个字符串，直接按对象名称查询。
+    </p>
+    <h3>editObject</h3>
+    <p>
+        向指定的群落和对象集写入一个以指定字符串为名的对象。
+        需要参数为群落名、对象集名、对象名和属性列表(clusterName, collectionName, objectName, data)。
+        其中属性列表为一个键值对关联数组，键与值均为字符串。
+    </p>
+    <h3>dropCluster</h3>
+    <p>
+        删除一个群落。需要参数为群落名(clusterName)。
+    </p>
+    <h3>dropCollection</h3>
+    <p>
+        删除一个对象集。需要参数为群落名和对象集名(clusterName, collectionName)。
+    </p>
+    <h3>dropObject</h3>
+    <p>
+        删除一个对象。需要参数为群落名、对象集名、对象名(clusterName, collectionName, objectName)。
+    </p>
+    <h3>renameCluster</h3>
+    <p>
+        重命名群落。需要参数为原群落名和新名称(clusterName, name)。
+    </p>
+    <h3>renameCollection</h3>
+    <p>
+        重命名对象集。需要参数为群落名，原对象集名和新名称(clusterName, collectionName, name)。
+    </p>
+    <h3>renameObject</h3>
+    <p>
+        重命名对象。需要参数为群落名，对象集名，原对象名和新名称(clusterName, collectionName, objectName, name)。
+    </p>
+</div>
+</body>
+</html>

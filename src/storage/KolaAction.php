@@ -98,7 +98,7 @@ class KolaAction
     /**
      * @param string $clusterName
      * @param string $collectionName
-     * @param KolaQuery $query
+     * @param string|KolaQuery $query
      * @return KolaAction
      */
     public static function createQueryAction($clusterName, $collectionName, $query)
@@ -107,7 +107,11 @@ class KolaAction
         $instance->action = self::ACTION_QUERY;
         $instance->clusterName = $clusterName;
         $instance->collectionName = $collectionName;
-        $instance->query = $query;
+        if (is_string($query)) {
+            $instance->objectName = $query;
+        } else {
+            $instance->query = $query;
+        }
         return $instance;
     }
 
@@ -246,7 +250,11 @@ class KolaAction
             switch ($this->action) {
                 case self::ACTION_QUERY:
                     $agent = new KolaAgent($this->clusterName);
-                    $this->result = $agent->selectObjectsInCollection($this->collectionName, $this->query);
+                    if (is_string($this->query)) {
+                        $this->result = $agent->selectObjectInCollection($this->collectionName, $this->query);
+                    } else {
+                        $this->result = $agent->selectObjectsInCollection($this->collectionName, $this->query);
+                    }
                     break;
                 case self::ACTION_LIST:
                     $agent = new KolaAgent($this->clusterName);

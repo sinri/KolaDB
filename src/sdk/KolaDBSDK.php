@@ -82,7 +82,7 @@ class KolaDBSDK
     /**
      * @param string $clusterName
      * @param string $collectionName
-     * @param KolaQuery $query
+     * @param string|KolaQuery $query
      * @return bool|array
      */
     public function queryObject($clusterName, $collectionName, $query)
