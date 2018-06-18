@@ -6,6 +6,8 @@ Simple Information Storage Service.
 
 ## Structure
 
+A simple three level object storage structure and simple key-value properties within objects.
+
 ```
 Cluster::DIR {
     Collection::DIR {
@@ -19,9 +21,26 @@ Cluster::DIR {
 
 ## Action
 
+Action grammar is used to communicate with the server to do certain action.
+
+### Action for Drop
+
 ```json
 {
-  "action":"drop|edit",
+  "action":"drop",
+  "cluster":"CLUSTER_NAME",
+  "collection":"COLLECTION_NAME",
+  "object":"OBJECT_NAME"
+}
+```
+
+Fields `collection` and `object` are optional. 
+
+### Action for Edit
+
+```json
+{
+  "action":"edit",
   "cluster":"CLUSTER_NAME",
   "collection":"COLLECTION_NAME",
   "object":"OBJECT_NAME",
@@ -30,6 +49,9 @@ Cluster::DIR {
   }
 }
 ```
+
+### Action for Rename
+
 
 ```json
 {
@@ -40,6 +62,8 @@ Cluster::DIR {
   "change":"NEW_NAME"
 }
 ```
+
+Fields `collection` and `object` are optional. 
 
 ### Action for Query
 
@@ -74,7 +98,7 @@ Cluster::DIR {
 
 ```
 
-### Action for show
+### Action for List
 
 ```json
 {
@@ -83,3 +107,5 @@ Cluster::DIR {
   "collection":"COLLECTION_NAME"
 }
 ```
+
+Field `collection` is optional.
