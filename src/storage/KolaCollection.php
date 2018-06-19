@@ -111,6 +111,7 @@ class KolaCollection extends KolaFileSystemMapping
     public static function deleteCollection($clusterName, $collectionName)
     {
         $collectionPath = KolaCollection::getCollectionDirectoryPath($clusterName, $collectionName);
+        if (!file_exists($collectionPath)) return true;
         return self::removeDirectoryRecursively($collectionPath);
     }
 

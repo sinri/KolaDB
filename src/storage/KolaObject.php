@@ -149,6 +149,8 @@ class KolaObject extends KolaFileSystemMapping
     public static function deleteObject($clusterName, $collectionName, $objectName)
     {
         $objectPath = KolaObject::getObjectFilePath($clusterName, $collectionName, $objectName);
+        if (!file_exists($objectPath)) return true;
+        if (is_dir($objectPath)) return self::removeDirectoryRecursively($objectPath);
         return unlink($objectPath);
     }
 
