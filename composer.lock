@@ -1,9 +1,10 @@
 {
   "_readme": [
     "This file locks the dependencies of your project to a known state",
-    "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+    "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
     "This file is @generated automatically"
   ],
+  "hash": "706169a187fd4cddf2b087169215fb96",
   "content-hash": "df4960e5a34110c0e94ee59656e77c22",
   "packages": [
     {
@@ -16,7 +17,7 @@
       },
       "dist": {
         "type": "zip",
-        "url": "https://files.phpcomposer.com/files/JayBizzle/Crawler-Detect/3566bc69d0839ab2dfd739a660b00f25a6f02031.zip",
+        "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/3566bc69d0839ab2dfd739a660b00f25a6f02031",
         "reference": "3566bc69d0839ab2dfd739a660b00f25a6f02031",
         "shasum": ""
       },
@@ -53,7 +54,7 @@
         "crawlerdetect",
         "php crawler detect"
       ],
-      "time": "2018-05-21T19:56:44+00:00"
+      "time": "2018-05-21 19:56:44"
     },
     {
       "name": "jenssegers/agent",
@@ -65,7 +66,7 @@
       },
       "dist": {
         "type": "zip",
-        "url": "https://files.phpcomposer.com/files/jenssegers/agent/df71082ed2a95fc8a82ba30832ccf72df939f02a.zip",
+        "url": "https://api.github.com/repos/jenssegers/agent/zipball/df71082ed2a95fc8a82ba30832ccf72df939f02a",
         "reference": "df71082ed2a95fc8a82ba30832ccf72df939f02a",
         "shasum": ""
       },
@@ -119,7 +120,7 @@
         "user agent",
         "useragent"
       ],
-      "time": "2017-11-10T10:35:35+00:00"
+      "time": "2017-11-10 10:35:35"
     },
     {
       "name": "mobiledetect/mobiledetectlib",
@@ -131,7 +132,7 @@
       },
       "dist": {
         "type": "zip",
-        "url": "https://files.phpcomposer.com/files/serbanghita/Mobile-Detect/ec69a0c381b5fe44547680d3c7db6ced08e5abb3.zip",
+        "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/ec69a0c381b5fe44547680d3c7db6ced08e5abb3",
         "reference": "ec69a0c381b5fe44547680d3c7db6ced08e5abb3",
         "shasum": ""
       },
@@ -171,7 +172,7 @@
         "mobile detector",
         "php mobile detect"
       ],
-      "time": "2018-06-03T13:13:04+00:00"
+      "time": "2018-06-03 13:13:04"
     },
     {
       "name": "psr/log",
@@ -183,7 +184,7 @@
       },
       "dist": {
         "type": "zip",
-        "url": "https://files.phpcomposer.com/files/php-fig/log/4ebe3a8bf773a19edfe0a84b6585ba3d401b724d.zip",
+        "url": "https://api.github.com/repos/php-fig/log/zipball/4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
         "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
         "shasum": ""
       },
@@ -218,7 +219,7 @@
         "psr",
         "psr-3"
       ],
-      "time": "2016-10-10T12:19:37+00:00"
+      "time": "2016-10-10 12:19:37"
     },
     {
       "name": "ralouphie/getallheaders",
@@ -230,7 +231,7 @@
       },
       "dist": {
         "type": "zip",
-        "url": "https://files.phpcomposer.com/files/ralouphie/getallheaders/5601c8a83fbba7ef674a7369456d12f1e0d0eafa.zip",
+        "url": "https://api.github.com/repos/ralouphie/getallheaders/zipball/5601c8a83fbba7ef674a7369456d12f1e0d0eafa",
         "reference": "5601c8a83fbba7ef674a7369456d12f1e0d0eafa",
         "shasum": ""
       },
@@ -258,7 +259,7 @@
         }
       ],
       "description": "A polyfill for getallheaders.",
-      "time": "2016-02-11T07:05:27+00:00"
+      "time": "2016-02-11 07:05:27"
     },
     {
       "name": "ralouphie/mimey",
@@ -270,7 +271,7 @@
       },
       "dist": {
         "type": "zip",
-        "url": "https://files.phpcomposer.com/files/ralouphie/mimey/d69688d4856daa13a9124c819d148ccc2235dea2.zip",
+        "url": "https://api.github.com/repos/ralouphie/mimey/zipball/d69688d4856daa13a9124c819d148ccc2235dea2",
         "reference": "d69688d4856daa13a9124c819d148ccc2235dea2",
         "shasum": ""
       },
@@ -298,7 +299,7 @@
         }
       ],
       "description": "PHP package for converting file extensions to MIME types and vice versa.",
-      "time": "2017-01-27T20:57:22+00:00"
+      "time": "2017-01-27 20:57:22"
     },
     {
       "name": "sinri/ark",
@@ -310,7 +311,7 @@
       },
       "dist": {
         "type": "zip",
-        "url": "https://files.phpcomposer.com/files/sinri/Ark/3eeb74315a62f33b306e6a6f83e865e281465c7e.zip",
+        "url": "https://api.github.com/repos/sinri/Ark/zipball/3eeb74315a62f33b306e6a6f83e865e281465c7e",
         "reference": "3eeb74315a62f33b306e6a6f83e865e281465c7e",
         "shasum": ""
       },
@@ -342,7 +343,7 @@
         }
       ],
       "description": "A fundamental toolkit for PHP.",
-      "time": "2018-05-21T07:37:24+00:00"
+      "time": "2018-05-21 07:37:24"
     },
     {
       "name": "sinri/smallphpmailer",
@@ -354,7 +355,7 @@
       },
       "dist": {
         "type": "zip",
-        "url": "https://files.phpcomposer.com/files/sinri/PHPMailer/028e146ab6b51bb121b3b6834ea002bd04bb38cb.zip",
+        "url": "https://api.github.com/repos/sinri/PHPMailer/zipball/028e146ab6b51bb121b3b6834ea002bd04bb38cb",
         "reference": "028e146ab6b51bb121b3b6834ea002bd04bb38cb",
         "shasum": ""
       },
@@ -394,7 +395,7 @@
         }
       ],
       "description": "PHPMailer is a full-featured email creation and transfer class for PHP. This is a thinned version.",
-      "time": "2017-07-18T09:33:07+00:00"
+      "time": "2017-07-18 09:33:07"
     }
   ],
   "packages-dev": [],

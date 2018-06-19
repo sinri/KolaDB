@@ -158,8 +158,8 @@ class KolaQuery
                 ArkHelper::assertItem(is_array($query->reference), "reference is not array");
                 break;
             case "QUERIES":
-                $subs = ArkHelper::readTarget($query, 'queries');
-                ArkHelper::assertItem(is_array($subs), "reference is not array");
+                $subs = ArkHelper::readTarget($queryArray, 'queries');
+                ArkHelper::assertItem(is_array($subs), "queries is not array");
                 $query->queries = [];
                 foreach ($subs as $sub) {
                     $query->queries[] = self::loadQueryDictionary($sub);
@@ -175,7 +175,6 @@ class KolaQuery
         $type = "UNKNOWN";
 
         if (in_array($method, [
-            self::METHOD_AND,
             self::METHOD_EQ,
             self::METHOD_EQX,
             self::METHOD_NEQ,
@@ -220,10 +219,12 @@ class KolaQuery
     {
         $objectNameList = $collection->getObjectNameList();
         $result = [];
-        foreach ($objectNameList as $objectName) {
-            $object = $collection->getObject($objectName);
-            if ($this->computeWithMethodAgainstObject($object)) {
-                $result[] = $object;
+        if (is_array($objectNameList)) {
+            foreach ($objectNameList as $objectName) {
+                $object = $collection->getObject($objectName);
+                if ($this->computeWithMethodAgainstObject($object)) {
+                    $result[] = $object;
+                }
             }
         }
         return $result;

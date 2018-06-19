@@ -29,6 +29,8 @@ foreach ($configPaths as $configPath) {
     }
 }
 
+\sinri\KolaDB\storage\KolaCluster::setRuntimeDirectoryPath(\sinri\ark\core\ArkHelper::readTarget($config, 'runtime.dir', null));
+
 $server = new \sinri\KolaDB\service\KolaServer($config["listen.address"], $config['listen.port']);
 
 echo date('Y-m-d H:i:s') . ' KolaDB Startup' . PHP_EOL;

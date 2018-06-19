@@ -81,14 +81,17 @@ class KolaAgent
      * @param string $objectName
      * @return array|bool
      */
-    public function selectObjectInCollection($collectionName, $objectName)
+    public function getObjectInCollection($collectionName, $objectName)
     {
         try {
             $object = $this->getCollection($collectionName)->getObject($objectName);
-            return [
-                "object_name" => $object->getObjectName(),
-                "data" => $object->getData(),
-            ];
+            if ($object->isSynchronized())
+                return [
+                    "object_name" => $object->getObjectName(),
+                    "data" => $object->getData(),
+                ];
+            else
+                throw new \Exception("object is not synchronized");
         } catch (\Exception $e) {
             return false;
         }
@@ -169,17 +172,7 @@ class KolaAgent
      */
     public static function listClusters()
     {
-        $list = [];
-        if ($handle = opendir(__DIR__ . '/../../runtime')) {
-            while (false !== ($entry = readdir($handle))) {
-                if ($entry != "." && $entry != "..") {
-                    $realClusterName = base64_decode($entry);
-                    $list[] = $realClusterName;
-                }
-            }
-            closedir($handle);
-        }
-        return $list;
+        return KolaCluster::listClusters();
     }
 
 }

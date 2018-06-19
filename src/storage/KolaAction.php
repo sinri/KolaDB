@@ -232,7 +232,12 @@ class KolaAction
                 if (!KolaFileSystemMapping::isValidEntityName($instance->collectionName)) {
                     throw new \Exception("collection name invalid");
                 }
-                $instance->query = KolaQuery::loadQueryDictionary(ArkHelper::readTarget($dictionary, 'query'));
+
+                $query = ArkHelper::readTarget($dictionary, 'query');
+                if (!is_string($query))
+                    $instance->query = KolaQuery::loadQueryDictionary($query);
+                else
+                    $instance->objectName = $query;
                 break;
             default:
                 throw new \Exception("action is not defined");
@@ -250,8 +255,8 @@ class KolaAction
             switch ($this->action) {
                 case self::ACTION_QUERY:
                     $agent = new KolaAgent($this->clusterName);
-                    if (is_string($this->query)) {
-                        $this->result = $agent->selectObjectInCollection($this->collectionName, $this->query);
+                    if (!$this->query) {
+                        $this->result = $agent->getObjectInCollection($this->collectionName, $this->objectName);
                     } else {
                         $this->result = $agent->selectObjectsInCollection($this->collectionName, $this->query);
                     }
@@ -317,7 +322,11 @@ class KolaAction
                 $json['cluster'] = $this->clusterName;
                 $json['collection'] = $this->collectionName;
                 //$json['object']=$this->objectName;
-                $json['query'] = $this->query->encode();
+                if (is_a($this->query, KolaQuery::class)) {
+                    $json['query'] = $this->query->encode();
+                } else {
+                    $json['query'] = $this->objectName;
+                }
                 break;
             case self::ACTION_EDIT:
                 $json['cluster'] = $this->clusterName;

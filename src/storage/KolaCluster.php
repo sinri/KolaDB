@@ -12,17 +12,13 @@ namespace sinri\KolaDB\storage;
 class KolaCluster extends KolaFileSystemMapping
 {
     /**
+     * @var null|string
+     */
+    protected static $runtimeDirectoryPath = null;
+    /**
      * @var string
      */
     protected $clusterName;
-
-    /**
-     * @return string
-     */
-    public function getClusterName()
-    {
-        return $this->clusterName;
-    }
 
     public function __construct($clusterName)
     {
@@ -30,12 +26,62 @@ class KolaCluster extends KolaFileSystemMapping
     }
 
     /**
+     * @return string[]
+     */
+    public static function listClusters()
+    {
+        $list = [];
+        if ($handle = opendir(self::getRuntimeDirectoryPath())) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry != "." && $entry != "..") {
+                    $realClusterName = base64_decode($entry);
+                    $list[] = $realClusterName;
+                }
+            }
+            closedir($handle);
+        }
+        return $list;
+    }
+
+    /**
+     * @return null|string
+     */
+    public static function getRuntimeDirectoryPath()
+    {
+        if (self::$runtimeDirectoryPath === null) {
+            return __DIR__ . '/../../runtime';
+        }
+        return self::$runtimeDirectoryPath;
+    }
+
+    /**
+     * @param null|string $runtimeDirectoryPath
+     */
+    public static function setRuntimeDirectoryPath($runtimeDirectoryPath)
+    {
+        if (!file_exists($runtimeDirectoryPath)) {
+            mkdir($runtimeDirectoryPath, 0777, true);
+        }
+        self::$runtimeDirectoryPath = $runtimeDirectoryPath;
+    }
+
+    /**
      * @param string $clusterName
+     * @return bool
+     */
+    public static function deleteCluster($clusterName)
+    {
+        $clusterPath = self::getClusterDirectoryPath($clusterName);
+        if (file_exists($clusterPath)) return self::removeDirectoryRecursively($clusterPath);
+        return true;
+    }
+
+    /**
      * @return string
      */
-    public static function getClusterDirectoryPath($clusterName)
+    public function getClusterName()
     {
-        return __DIR__ . '/../../runtime/' . base64_encode($clusterName);
+        return $this->clusterName;
     }
 
     /**
@@ -72,6 +118,15 @@ class KolaCluster extends KolaFileSystemMapping
     }
 
     /**
+     * @param string $clusterName
+     * @return string
+     */
+    public static function getClusterDirectoryPath($clusterName)
+    {
+        return self::getRuntimeDirectoryPath() . '/' . base64_encode($clusterName);
+    }
+
+    /**
      * @param $collectionName
      * @return KolaCollection
      */
@@ -87,17 +142,6 @@ class KolaCluster extends KolaFileSystemMapping
     public function deleteCollection($collectionName)
     {
         return KolaCollection::deleteCollection($this->clusterName, $collectionName);
-    }
-
-    /**
-     * @param string $clusterName
-     * @return bool
-     */
-    public static function deleteCluster($clusterName)
-    {
-        $clusterPath = self::getClusterDirectoryPath($clusterName);
-        if (file_exists($clusterPath)) return self::removeDirectoryRecursively($clusterPath);
-        return true;
     }
 
     public function rename($newName)

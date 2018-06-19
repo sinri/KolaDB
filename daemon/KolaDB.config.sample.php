@@ -18,3 +18,9 @@ $config["listen.address"] = "127.0.0.1";
  * The port to listen, an integer.
  */
 $config['listen.port'] = 3897;
+
+/**
+ * The directory path of the runtime folder, which should be a writable folder.
+ * Leave it to null would refer to runtime folder under KolaDB root folder.
+ */
+$config['runtime.dir'] = null;
