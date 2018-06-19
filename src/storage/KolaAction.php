@@ -19,6 +19,9 @@ class KolaAction
     const ACTION_LIST = "list";
     const ACTION_RENAME = "rename";
 
+    protected $username;
+    protected $password;
+
     /**
      * @var string
      */
